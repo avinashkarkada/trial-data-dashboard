@@ -1,0 +1,4 @@
+Part 4 baseline subset summary
+==============================
+Baseline melanoma PBMC miraclib samples: 656
+Average B-cell count for melanoma male responders at time=0: 10401.28
