@@ -109,11 +109,76 @@ with tab_overview:
 
 with tab_part2:
     st.header("Part 2: Frequency Summary")
+
     if part2_df is None:
         st.warning("Part 2 output file not found. Run the pipeline first.")
     else:
-        st.success("Part 2 output file loaded successfully.")
-        st.write("Detailed display will be added next.")
+        st.markdown(
+            """
+            This table shows the relative frequency of each immune cell population in each sample.
+            For every sample, the total cell count is computed across the five populations, and each
+            population's frequency is reported as a percentage of that total.
+            """
+        )
+
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Rows", f"{len(part2_df):,}")
+        col2.metric("Unique samples", f"{part2_df['sample'].nunique():,}")
+        col3.metric("Populations", f"{part2_df['population'].nunique()}")
+
+        st.subheader("Filters")
+
+        available_populations = sorted(part2_df["population"].dropna().unique().tolist())
+        selected_populations = st.multiselect(
+            "Select population(s)",
+            options=available_populations,
+            default=available_populations,
+        )
+
+        sample_search = st.text_input(
+            "Search sample ID",
+            placeholder="Type part of a sample ID...",
+        )
+
+        max_rows = st.slider(
+            "Maximum rows to display",
+            min_value=10,
+            max_value=500,
+            value=100,
+            step=10,
+        )
+
+        filtered_part2_df = part2_df.copy()
+
+        if selected_populations:
+            filtered_part2_df = filtered_part2_df[
+                filtered_part2_df["population"].isin(selected_populations)
+            ]
+
+        if sample_search.strip():
+            filtered_part2_df = filtered_part2_df[
+                filtered_part2_df["sample"].str.contains(sample_search, case=False, na=False)
+            ]
+
+        st.subheader("Filtered frequency table")
+        st.write(f"Showing {min(len(filtered_part2_df), max_rows):,} of {len(filtered_part2_df):,} rows")
+
+        st.dataframe(
+            filtered_part2_df.head(max_rows),
+            use_container_width=True,
+            hide_index=True,
+        )
+
+        with st.expander("Column descriptions"):
+            st.markdown(
+                """
+                - **sample**: sample identifier
+                - **total_count**: total number of cells across all five populations in that sample
+                - **population**: immune cell population name
+                - **count**: raw cell count for that population in the sample
+                - **percentage**: relative frequency of that population within the sample
+                """
+            )
 
 with tab_part3:
     st.header("Part 3: Statistical Analysis")
