@@ -1,6 +1,6 @@
 # trial-data-dashboard
 
-End-to-end clinical data analysis pipeline and interactive visualization dashboard repo.
+Clinical trial immune-cell analysis pipeline and interactive dashboard.
 
 ## Overview
 
@@ -159,20 +159,22 @@ The Part 3 analysis filters to:
 - `sample_type = PBMC`
 - `response in {yes, no}`
 
-Because the dataset is longitudinal and each subject contributes repeated samples across timepoints, Part 3 analysis uses a repeated measures model rather than treating all samples as independent.
+Because the dataset is longitudinal and each subject contributes repeated samples across timepoints, Part 3 uses a repeated-measures model rather than treating all samples as independent.
 
 The primary analysis uses:
-- Binomial GEE
+- binomial GEE
 - subject-level clustering to account for repeated measures
 - categorical timepoint
-- response by timepoint interaction
-- Benjamini-Hochberg correction for multiple testing across the five immune populations
+- response-by-timepoint interaction
+- Benjamini-Hochberg correction across the five immune populations
+
+For each population, the model tests whether response status and response-by-timepoint effects are associated with differences in relative frequency while accounting for within-subject correlation.
 
 Outputs:
 - `outputs/part3_filtered_frequencies.csv`
 - `outputs/part3_population_statistics_gee.csv`
 - `outputs/part3_gee_model_summaries.txt`
-- `outputs/part3_boxplots_by_time.png`
+- `outputs/part3_boxplots.png`
 
 ### Part 4: Baseline subset analysis
 The Part 4 analysis filters to:
@@ -238,11 +240,15 @@ Dependencies are listed in `requirements.txt`.
 
 ## Dashboard
 
-Local dashboard entry point:
+The dashboard is implemented in Streamlit and reads the generated output files from `outputs/`. It provides tabs for:
+
+- project overview
+- Part 2 frequency summary
+- Part 3 statistical analysis
+- Part 4 baseline subset analysis
+
+Launch locally with:
 
     streamlit run dashboard.py
-
-Dashboard link:
-- To be added after final dashboard setup
 
 ---
