@@ -433,8 +433,131 @@ with tab_part3:
 
 with tab_part4:
     st.header("Part 4: Baseline Subset")
-    if part4_baseline_df is None:
+
+    if (
+        part4_baseline_df is None
+        or part4_project_df is None
+        or part4_response_df is None
+        or part4_sex_df is None
+    ):
         st.warning("Part 4 output files not found. Run the pipeline first.")
     else:
-        st.success("Part 4 output files loaded successfully.")
-        st.write("Detailed display will be added next.")
+        st.markdown(
+            """
+            This section focuses on melanoma PBMC samples collected at baseline
+            (`time_from_treatment_start = 0`) from subjects treated with miraclib.
+            """
+        )
+
+        baseline_samples = len(part4_baseline_df)
+        unique_subjects = part4_baseline_df["subject"].nunique() if "subject" in part4_baseline_df.columns else 0
+        n_projects = part4_baseline_df["project"].nunique() if "project" in part4_baseline_df.columns else 0
+
+        male_responder_df = part4_baseline_df[
+            (part4_baseline_df["sex"] == "M") & (part4_baseline_df["response"] == "yes")
+        ].copy()
+
+        avg_b_cell = None
+        if not male_responder_df.empty and "b_cell_count" in male_responder_df.columns:
+            avg_b_cell = male_responder_df["b_cell_count"].mean()
+
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Baseline samples", f"{baseline_samples:,}")
+        col2.metric("Unique subjects", f"{unique_subjects:,}")
+        col3.metric("Projects represented", f"{n_projects}")
+        col4.metric(
+            "Avg B-cell count (male responders)",
+            "N/A" if avg_b_cell is None or pd.isna(avg_b_cell) else f"{avg_b_cell:.2f}",
+        )
+
+        st.subheader("Key Part 4 result")
+        if avg_b_cell is not None and not pd.isna(avg_b_cell):
+            st.success(
+                "Considering melanoma males, the average number of B cells for responders at time = 0 is "
+                f"{avg_b_cell:.2f}."
+            )
+        else:
+            st.info("Average B-cell count for melanoma male responders could not be calculated.")
+
+        table_col1, table_col2, table_col3 = st.columns(3)
+
+        with table_col1:
+            st.subheader("Samples per project")
+            st.dataframe(part4_project_df, use_container_width=True, hide_index=True)
+
+        with table_col2:
+            st.subheader("Subjects by response")
+            st.dataframe(part4_response_df, use_container_width=True, hide_index=True)
+
+        with table_col3:
+            st.subheader("Subjects by sex")
+            st.dataframe(part4_sex_df, use_container_width=True, hide_index=True)
+
+        st.subheader("Baseline subset table")
+
+        project_options = sorted(part4_baseline_df["project"].dropna().unique().tolist())
+        response_options = sorted(part4_baseline_df["response"].dropna().unique().tolist())
+        sex_options = sorted(part4_baseline_df["sex"].dropna().unique().tolist())
+
+        filter_col1, filter_col2, filter_col3 = st.columns(3)
+
+        with filter_col1:
+            selected_projects = st.multiselect(
+                "Project",
+                options=project_options,
+                default=project_options,
+            )
+
+        with filter_col2:
+            selected_responses = st.multiselect(
+                "Response",
+                options=response_options,
+                default=response_options,
+            )
+
+        with filter_col3:
+            selected_sexes = st.multiselect(
+                "Sex",
+                options=sex_options,
+                default=sex_options,
+            )
+
+        max_rows_part4 = st.slider(
+            "Maximum baseline rows to display",
+            min_value=10,
+            max_value=500,
+            value=100,
+            step=10,
+            key="part4_max_rows",
+        )
+
+        filtered_part4_df = part4_baseline_df.copy()
+
+        if selected_projects:
+            filtered_part4_df = filtered_part4_df[
+                filtered_part4_df["project"].isin(selected_projects)
+            ]
+
+        if selected_responses:
+            filtered_part4_df = filtered_part4_df[
+                filtered_part4_df["response"].isin(selected_responses)
+            ]
+
+        if selected_sexes:
+            filtered_part4_df = filtered_part4_df[
+                filtered_part4_df["sex"].isin(selected_sexes)
+            ]
+
+        st.write(
+            f"Showing {min(len(filtered_part4_df), max_rows_part4):,} of {len(filtered_part4_df):,} rows"
+        )
+
+        st.dataframe(
+            filtered_part4_df.head(max_rows_part4),
+            use_container_width=True,
+            hide_index=True,
+        )
+
+        if part4_summary_text is not None:
+            with st.expander("Part 4 summary text"):
+                st.code(part4_summary_text, language="text")
