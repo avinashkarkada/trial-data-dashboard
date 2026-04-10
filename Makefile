@@ -1,11 +1,12 @@
 PYTHON ?= python
 PIP ?= $(PYTHON) -m pip
 STREAMLIT ?= $(PYTHON) -m streamlit
+HOST ?= 0.0.0.0
+PORT ?= 8501
 
 .PHONY: setup pipeline dashboard
 
 setup:
-	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 
 pipeline:
@@ -13,4 +14,4 @@ pipeline:
 	$(PYTHON) generate_outputs.py
 
 dashboard:
-	$(STREAMLIT) run dashboard.py --server.address 0.0.0.0 --server.port 8501
+	$(STREAMLIT) run dashboard.py --server.address $(HOST) --server.port $(PORT)
