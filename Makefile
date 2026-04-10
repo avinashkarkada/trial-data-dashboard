@@ -1,6 +1,6 @@
 PYTHON ?= python
 PIP ?= $(PYTHON) -m pip
-STREAMLIT ?= streamlit
+STREAMLIT ?= $(PYTHON) -m streamlit
 
 .PHONY: setup pipeline dashboard
 
