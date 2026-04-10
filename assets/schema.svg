@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1264" height="454" viewBox="0 0 1264 454">
+<rect x="0" y="0" width="1264" height="454" fill="#2b2b2b"/>
+<path d="M 285.0 198.0 L 351.0 198.0 L 351.0 70.0 L 357.0 70.0" fill="none" stroke="#20a9ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="285.0" cy="198.0" r="4.2" fill="#20a9ff"/><circle cx="357.0" cy="70.0" r="4.2" fill="#20a9ff"/>
+<path d="M 285.0 226.0 L 347.0 226.0 L 347.0 388.0 L 357.0 388.0" fill="none" stroke="#20a9ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="285.0" cy="226.0" r="4.2" fill="#20a9ff"/><circle cx="357.0" cy="388.0" r="4.2" fill="#20a9ff"/>
+<path d="M 654.0 126.0 L 696.0 126.0 L 696.0 58.0 L 726.0 58.0" fill="none" stroke="#20a9ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 6"/><circle cx="654.0" cy="126.0" r="4.2" fill="#20a9ff"/><circle cx="726.0" cy="58.0" r="4.2" fill="#20a9ff"/>
+<path d="M 935.0 86.0 L 977.0 86.0 L 977.0 104.0 L 1031.0 104.0" fill="none" stroke="#20a9ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 6"/><circle cx="935.0" cy="86.0" r="4.2" fill="#20a9ff"/><circle cx="1031.0" cy="104.0" r="4.2" fill="#20a9ff"/>
+
+    <g>
+      <rect x="24" y="155" width="265" height="118" rx="4" ry="4"
+            fill="#1e1e1e" opacity="0.55"/>
+      <rect x="20" y="150" width="265" height="118" rx="4" ry="4"
+            fill="#454545" stroke="#00a2ff" stroke-width="2"/>
+      <rect x="20" y="150" width="265" height="34" rx="4" ry="4"
+            fill="#343434"/>
+      <rect x="20" y="180" width="265" height="4"
+            fill="#343434"/>
+      <g transform="translate(32,161)">
+        <rect x="0" y="0" width="13" height="11" rx="1" fill="none" stroke="#6ec6ff" stroke-width="1.2"/>
+        <line x1="4.33" y1="0" x2="4.33" y2="11" stroke="#6ec6ff" stroke-width="1"/>
+        <line x1="8.66" y1="0" x2="8.66" y2="11" stroke="#6ec6ff" stroke-width="1"/>
+        <line x1="0" y1="5.5" x2="13" y2="5.5" stroke="#6ec6ff" stroke-width="1"/>
+      </g>
+      <text x="52" y="172" font-family="DejaVu Sans, Arial, sans-serif"
+            font-size="17" fill="#e8e8e8">cell_counts</text>
+    </g>
+    
+<line x1="20" y1="184" x2="285" y2="184" stroke="#696969" stroke-width="1"/>
+<text x="32" y="202.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<rect x="22" y="188" width="3" height="20" rx="1.5" fill="#ffd86b"/>
+<text x="68" y="202.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700" fill="#ffffff">sample_id</text>
+<rect x="245" y="190" width="28" height="16" rx="8" fill="#173c63" opacity="0.95"/>
+<text x="252" y="201.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#8fd3ff">FK</text>
+<rect x="211" y="190" width="28" height="16" rx="8" fill="#6b4f00" opacity="0.95"/>
+<text x="218" y="201.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#ffd86b">PK</text>
+<line x1="20" y1="212" x2="285" y2="212" stroke="#696969" stroke-width="1"/>
+<text x="32" y="230.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<rect x="22" y="216" width="3" height="20" rx="1.5" fill="#ffd86b"/>
+<text x="68" y="230.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700" fill="#ffffff">population_id</text>
+<rect x="245" y="218" width="28" height="16" rx="8" fill="#173c63" opacity="0.95"/>
+<text x="252" y="229.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#8fd3ff">FK</text>
+<rect x="211" y="218" width="28" height="16" rx="8" fill="#6b4f00" opacity="0.95"/>
+<text x="218" y="229.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#ffd86b">PK</text>
+<line x1="20" y1="240" x2="285" y2="240" stroke="#696969" stroke-width="1"/>
+<text x="32" y="258.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<text x="68" y="258.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">count</text>
+
+    <g>
+      <rect x="361" y="345" width="233" height="90" rx="4" ry="4"
+            fill="#1e1e1e" opacity="0.55"/>
+      <rect x="357" y="340" width="233" height="90" rx="4" ry="4"
+            fill="#454545" stroke="#00a2ff" stroke-width="2"/>
+      <rect x="357" y="340" width="233" height="34" rx="4" ry="4"
+            fill="#343434"/>
+      <rect x="357" y="370" width="233" height="4"
+            fill="#343434"/>
+      <g transform="translate(369,351)">
+        <rect x="0" y="0" width="13" height="11" rx="1" fill="none" stroke="#6ec6ff" stroke-width="1.2"/>
+        <line x1="4.33" y1="0" x2="4.33" y2="11" stroke="#6ec6ff" stroke-width="1"/>
+        <line x1="8.66" y1="0" x2="8.66" y2="11" stroke="#6ec6ff" stroke-width="1"/>
+        <line x1="0" y1="5.5" x2="13" y2="5.5" stroke="#6ec6ff" stroke-width="1"/>
+      </g>
+      <text x="389" y="362" font-family="DejaVu Sans, Arial, sans-serif"
+            font-size="17" fill="#e8e8e8">populations</text>
+    </g>
+    
+<line x1="357" y1="374" x2="590" y2="374" stroke="#696969" stroke-width="1"/>
+<text x="369" y="392.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<rect x="359" y="378" width="3" height="20" rx="1.5" fill="#ffd86b"/>
+<text x="405" y="392.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700" fill="#ffffff">population_id</text>
+<rect x="550" y="380" width="28" height="16" rx="8" fill="#6b4f00" opacity="0.95"/>
+<text x="557" y="391.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#ffd86b">PK</text>
+<line x1="357" y1="402" x2="590" y2="402" stroke="#696969" stroke-width="1"/>
+<text x="369" y="420.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">A-Z</text>
+<text x="405" y="420.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">population_name</text>
+
+    <g>
+      <rect x="1035" y="61" width="209" height="90" rx="4" ry="4"
+            fill="#1e1e1e" opacity="0.55"/>
+      <rect x="1031" y="56" width="209" height="90" rx="4" ry="4"
+            fill="#454545" stroke="#00a2ff" stroke-width="2"/>
+      <rect x="1031" y="56" width="209" height="34" rx="4" ry="4"
+            fill="#343434"/>
+      <rect x="1031" y="86" width="209" height="4"
+            fill="#343434"/>
+      <g transform="translate(1043,67)">
+        <rect x="0" y="0" width="13" height="11" rx="1" fill="none" stroke="#6ec6ff" stroke-width="1.2"/>
+        <line x1="4.33" y1="0" x2="4.33" y2="11" stroke="#6ec6ff" stroke-width="1"/>
+        <line x1="8.66" y1="0" x2="8.66" y2="11" stroke="#6ec6ff" stroke-width="1"/>
+        <line x1="0" y1="5.5" x2="13" y2="5.5" stroke="#6ec6ff" stroke-width="1"/>
+      </g>
+      <text x="1063" y="78" font-family="DejaVu Sans, Arial, sans-serif"
+            font-size="17" fill="#e8e8e8">projects</text>
+    </g>
+    
+<line x1="1031" y1="90" x2="1240" y2="90" stroke="#696969" stroke-width="1"/>
+<text x="1043" y="108.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<rect x="1033" y="94" width="3" height="20" rx="1.5" fill="#ffd86b"/>
+<text x="1079" y="108.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700" fill="#ffffff">project_id</text>
+<rect x="1200" y="96" width="28" height="16" rx="8" fill="#6b4f00" opacity="0.95"/>
+<text x="1207" y="107.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#ffd86b">PK</text>
+<line x1="1031" y1="118" x2="1240" y2="118" stroke="#696969" stroke-width="1"/>
+<text x="1043" y="136.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">A-Z</text>
+<text x="1079" y="136.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">project_code</text>
+
+    <g>
+      <rect x="361" y="27" width="297" height="174" rx="4" ry="4"
+            fill="#1e1e1e" opacity="0.55"/>
+      <rect x="357" y="22" width="297" height="174" rx="4" ry="4"
+            fill="#454545" stroke="#00a2ff" stroke-width="2"/>
+      <rect x="357" y="22" width="297" height="34" rx="4" ry="4"
+            fill="#343434"/>
+      <rect x="357" y="52" width="297" height="4"
+            fill="#343434"/>
+      <g transform="translate(369,33)">
+        <rect x="0" y="0" width="13" height="11" rx="1" fill="none" stroke="#6ec6ff" stroke-width="1.2"/>
+        <line x1="4.33" y1="0" x2="4.33" y2="11" stroke="#6ec6ff" stroke-width="1"/>
+        <line x1="8.66" y1="0" x2="8.66" y2="11" stroke="#6ec6ff" stroke-width="1"/>
+        <line x1="0" y1="5.5" x2="13" y2="5.5" stroke="#6ec6ff" stroke-width="1"/>
+      </g>
+      <text x="389" y="44" font-family="DejaVu Sans, Arial, sans-serif"
+            font-size="17" fill="#e8e8e8">samples</text>
+    </g>
+    
+<line x1="357" y1="56" x2="654" y2="56" stroke="#696969" stroke-width="1"/>
+<text x="369" y="74.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<rect x="359" y="60" width="3" height="20" rx="1.5" fill="#ffd86b"/>
+<text x="405" y="74.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700" fill="#ffffff">sample_id</text>
+<rect x="614" y="62" width="28" height="16" rx="8" fill="#6b4f00" opacity="0.95"/>
+<text x="621" y="73.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#ffd86b">PK</text>
+<line x1="357" y1="84" x2="654" y2="84" stroke="#696969" stroke-width="1"/>
+<text x="369" y="102.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">A-Z</text>
+<text x="405" y="102.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">sample_code</text>
+<line x1="357" y1="112" x2="654" y2="112" stroke="#696969" stroke-width="1"/>
+<text x="369" y="130.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<text x="405" y="130.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">subject_id</text>
+<rect x="614" y="118" width="28" height="16" rx="8" fill="#173c63" opacity="0.95"/>
+<text x="621" y="129.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#8fd3ff">FK</text>
+<line x1="357" y1="140" x2="654" y2="140" stroke="#696969" stroke-width="1"/>
+<text x="369" y="158.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">A-Z</text>
+<text x="405" y="158.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">sample_type</text>
+<line x1="357" y1="168" x2="654" y2="168" stroke="#696969" stroke-width="1"/>
+<text x="369" y="186.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<text x="405" y="186.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">time_from_treatment_start</text>
+
+    <g>
+      <rect x="730" y="15" width="209" height="258" rx="4" ry="4"
+            fill="#1e1e1e" opacity="0.55"/>
+      <rect x="726" y="10" width="209" height="258" rx="4" ry="4"
+            fill="#454545" stroke="#00a2ff" stroke-width="2"/>
+      <rect x="726" y="10" width="209" height="34" rx="4" ry="4"
+            fill="#343434"/>
+      <rect x="726" y="40" width="209" height="4"
+            fill="#343434"/>
+      <g transform="translate(738,21)">
+        <rect x="0" y="0" width="13" height="11" rx="1" fill="none" stroke="#6ec6ff" stroke-width="1.2"/>
+        <line x1="4.33" y1="0" x2="4.33" y2="11" stroke="#6ec6ff" stroke-width="1"/>
+        <line x1="8.66" y1="0" x2="8.66" y2="11" stroke="#6ec6ff" stroke-width="1"/>
+        <line x1="0" y1="5.5" x2="13" y2="5.5" stroke="#6ec6ff" stroke-width="1"/>
+      </g>
+      <text x="758" y="32" font-family="DejaVu Sans, Arial, sans-serif"
+            font-size="17" fill="#e8e8e8">subjects</text>
+    </g>
+    
+<line x1="726" y1="44" x2="935" y2="44" stroke="#696969" stroke-width="1"/>
+<text x="738" y="62.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<rect x="728" y="48" width="3" height="20" rx="1.5" fill="#ffd86b"/>
+<text x="774" y="62.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700" fill="#ffffff">subject_id</text>
+<rect x="895" y="50" width="28" height="16" rx="8" fill="#6b4f00" opacity="0.95"/>
+<text x="902" y="61.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#ffd86b">PK</text>
+<line x1="726" y1="72" x2="935" y2="72" stroke="#696969" stroke-width="1"/>
+<text x="738" y="90.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<text x="774" y="90.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">project_id</text>
+<rect x="895" y="78" width="28" height="16" rx="8" fill="#173c63" opacity="0.95"/>
+<text x="902" y="89.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#8fd3ff">FK</text>
+<line x1="726" y1="100" x2="935" y2="100" stroke="#696969" stroke-width="1"/>
+<text x="738" y="118.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">A-Z</text>
+<text x="774" y="118.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">subject_code</text>
+<line x1="726" y1="128" x2="935" y2="128" stroke="#696969" stroke-width="1"/>
+<text x="738" y="146.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">A-Z</text>
+<text x="774" y="146.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">condition</text>
+<line x1="726" y1="156" x2="935" y2="156" stroke="#696969" stroke-width="1"/>
+<text x="738" y="174.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">123</text>
+<text x="774" y="174.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">age</text>
+<line x1="726" y1="184" x2="935" y2="184" stroke="#696969" stroke-width="1"/>
+<text x="738" y="202.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">A-Z</text>
+<text x="774" y="202.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">sex</text>
+<line x1="726" y1="212" x2="935" y2="212" stroke="#696969" stroke-width="1"/>
+<text x="738" y="230.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">A-Z</text>
+<text x="774" y="230.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">treatment</text>
+<line x1="726" y1="240" x2="935" y2="240" stroke="#696969" stroke-width="1"/>
+<text x="738" y="258.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#6ec6ff">A-Z</text>
+<text x="774" y="258.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#e8e8e8">response</text>
+</svg>

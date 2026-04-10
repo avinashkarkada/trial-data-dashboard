@@ -3,7 +3,9 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from scipy.stats import mannwhitneyu, ttest_ind
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from scipy.stats import chi2
 from statsmodels.stats.multitest import multipletests
 
 DB_PATH = Path("trial_data.db")
@@ -11,8 +13,8 @@ OUTPUT_DIR = Path("outputs")
 
 PART2_OUTPUT = OUTPUT_DIR / "sample_population_frequencies.csv"
 PART3_FILTERED_OUTPUT = OUTPUT_DIR / "part3_filtered_frequencies.csv"
-PART3_WELCH_OUTPUT = OUTPUT_DIR / "part3_population_statistics_welch.csv"
-PART3_MWU_OUTPUT = OUTPUT_DIR / "part3_population_statistics_mannwhitney.csv"
+PART3_GEE_OUTPUT = OUTPUT_DIR / "part3_population_statistics_gee.csv"
+PART3_SUMMARY_OUTPUT = OUTPUT_DIR / "part3_gee_model_summaries.txt"
 PART3_PLOT_OUTPUT = OUTPUT_DIR / "part3_boxplots.png"
 
 PART4_BASELINE_OUTPUT = OUTPUT_DIR / "part4_baseline_samples.csv"
@@ -23,7 +25,7 @@ PART4_SUMMARY_OUTPUT = OUTPUT_DIR / "part4_summary.txt"
 
 
 def fetch_cell_count_data(conn: sqlite3.Connection) -> pd.DataFrame:
-    query = """
+    query = '''
     SELECT
         s.sample_code AS sample,
         p.population_name AS population,
@@ -34,12 +36,12 @@ def fetch_cell_count_data(conn: sqlite3.Connection) -> pd.DataFrame:
     JOIN populations p
         ON cc.population_id = p.population_id
     ORDER BY s.sample_code, p.population_name;
-    """
+    '''
     return pd.read_sql_query(query, conn)
 
 
 def fetch_sample_metadata(conn: sqlite3.Connection) -> pd.DataFrame:
-    query = """
+    query = '''
     SELECT
         s.sample_code AS sample,
         pr.project_code AS project,
@@ -57,12 +59,12 @@ def fetch_sample_metadata(conn: sqlite3.Connection) -> pd.DataFrame:
     JOIN projects pr
         ON sub.project_id = pr.project_id
     ORDER BY s.sample_code;
-    """
+    '''
     return pd.read_sql_query(query, conn)
 
 
 def fetch_b_cell_counts(conn: sqlite3.Connection) -> pd.DataFrame:
-    query = """
+    query = '''
     SELECT
         s.sample_code AS sample,
         cc.count AS b_cell_count
@@ -73,7 +75,7 @@ def fetch_b_cell_counts(conn: sqlite3.Connection) -> pd.DataFrame:
         ON cc.population_id = p.population_id
     WHERE p.population_name = 'b_cell'
     ORDER BY s.sample_code;
-    """
+    '''
     return pd.read_sql_query(query, conn)
 
 
@@ -81,18 +83,12 @@ def build_frequency_summary(counts_df: pd.DataFrame) -> pd.DataFrame:
     summary_df = counts_df.copy()
     summary_df["total_count"] = summary_df.groupby("sample")["count"].transform("sum")
     summary_df["percentage"] = (summary_df["count"] / summary_df["total_count"]) * 100
-
-    summary_df = summary_df[
-        ["sample", "total_count", "population", "count", "percentage"]
-    ].copy()
-
+    summary_df = summary_df[["sample", "total_count", "population", "count", "percentage"]].copy()
     summary_df = summary_df.sort_values(["sample", "population"]).reset_index(drop=True)
     return summary_df
 
 
-def filter_part3_data(
-    summary_df: pd.DataFrame, metadata_df: pd.DataFrame
-) -> pd.DataFrame:
+def filter_part3_data(summary_df: pd.DataFrame, metadata_df: pd.DataFrame) -> pd.DataFrame:
     merged_df = summary_df.merge(metadata_df, on="sample", how="left")
 
     filtered_df = merged_df[
@@ -102,96 +98,104 @@ def filter_part3_data(
         & (merged_df["response"].isin(["yes", "no"]))
     ].copy()
 
+    filtered_df["subject_uid"] = filtered_df["project"] + "__" + filtered_df["subject"]
+    filtered_df["time_factor"] = filtered_df["time_from_treatment_start"].astype(str)
+    filtered_df["proportion"] = filtered_df["count"] / filtered_df["total_count"]
+
     filtered_df = filtered_df.sort_values(
-        ["population", "response", "sample"]
+        ["population", "subject_uid", "time_from_treatment_start", "sample"]
     ).reset_index(drop=True)
     return filtered_df
 
 
-def summarize_groups(
-    responder_vals: pd.Series, non_responder_vals: pd.Series
-) -> dict:
-    return {
-        "responder_n": len(responder_vals),
-        "non_responder_n": len(non_responder_vals),
-        "responder_mean_percentage": responder_vals.mean(),
-        "non_responder_mean_percentage": non_responder_vals.mean(),
-        "responder_median_percentage": responder_vals.median(),
-        "non_responder_median_percentage": non_responder_vals.median(),
-        "mean_difference_percentage": responder_vals.mean() - non_responder_vals.mean(),
-        "median_difference_percentage": responder_vals.median() - non_responder_vals.median(),
-    }
+def joint_test_for_response_terms(result) -> tuple[float, int, float]:
+    import numpy as np
+
+    param_names = list(result.params.index)
+    target_indices = [
+        idx
+        for idx, name in enumerate(param_names)
+        if name == "response[T.yes]" or name.startswith("response[T.yes]:")
+    ]
+
+    if not target_indices:
+        return float("nan"), 0, float("nan")
+
+    beta = result.params.values[target_indices]
+    cov = result.cov_params().values[np.ix_(target_indices, target_indices)]
+
+    try:
+        inv_cov = np.linalg.inv(cov)
+        wald_stat = float(beta.T @ inv_cov @ beta)
+        df = len(target_indices)
+        p_value = float(chi2.sf(wald_stat, df))
+    except Exception:
+        return float("nan"), len(target_indices), float("nan")
+
+    return wald_stat, len(target_indices), p_value
 
 
-def run_part3_welch_statistics(filtered_df: pd.DataFrame) -> pd.DataFrame:
+def run_part3_gee_statistics(filtered_df: pd.DataFrame):
     results = []
+    summary_blocks = []
+
     populations = sorted(filtered_df["population"].unique().tolist())
 
     for population in populations:
-        pop_df = filtered_df[filtered_df["population"] == population]
+        pop_df = filtered_df[filtered_df["population"] == population].copy()
 
-        responder_vals = pop_df.loc[pop_df["response"] == "yes", "percentage"]
-        non_responder_vals = pop_df.loc[pop_df["response"] == "no", "percentage"]
+        model = smf.gee(
+        formula="proportion ~ response * C(time_factor) + C(project)",
+        groups="subject_uid",
+        data=pop_df,
+        family=sm.families.Binomial(),
+        weights=pop_df["total_count"],
+        cov_struct=sm.cov_struct.Exchangeable(),)
 
-        statistic, p_value = ttest_ind(
-            responder_vals,
-            non_responder_vals,
-            equal_var=False,
-            nan_policy="raise",
-        )
+        result = model.fit()
+
+        params = result.params
+        pvalues = result.pvalues
+
+        wald_stat, wald_df, wald_p = joint_test_for_response_terms(result)
 
         results.append(
             {
                 "population": population,
-                **summarize_groups(responder_vals, non_responder_vals),
-                "test": "welch_t_test",
-                "test_statistic": statistic,
-                "p_value": p_value,
+                "n_samples": len(pop_df),
+                "n_subjects": pop_df["subject_uid"].nunique(),
+                "responder_subjects": pop_df.loc[pop_df["response"] == "yes", "subject_uid"].nunique(),
+                "non_responder_subjects": pop_df.loc[pop_df["response"] == "no", "subject_uid"].nunique(),
+                "response_coef": params.get("response[T.yes]", float("nan")),
+                "response_p_value": pvalues.get("response[T.yes]", float("nan")),
+                "interaction_time7_coef": params.get("response[T.yes]:C(time_factor)[T.7]", float("nan")),
+                "interaction_time7_p_value": pvalues.get("response[T.yes]:C(time_factor)[T.7]", float("nan")),
+                "interaction_time14_coef": params.get("response[T.yes]:C(time_factor)[T.14]", float("nan")),
+                "interaction_time14_p_value": pvalues.get("response[T.yes]:C(time_factor)[T.14]", float("nan")),
+                "joint_response_time_wald_stat": wald_stat,
+                "joint_response_time_df": wald_df,
+                "joint_response_time_p_value": wald_p,
             }
         )
 
-    stats_df = pd.DataFrame(results)
-    rejected, fdr_values, _, _ = multipletests(stats_df["p_value"], method="fdr_bh")
-    stats_df["fdr_bh"] = fdr_values
-    stats_df["significant_fdr_0_05"] = rejected
-
-    stats_df = stats_df.sort_values("p_value").reset_index(drop=True)
-    return stats_df
-
-
-def run_part3_mannwhitney_statistics(filtered_df: pd.DataFrame) -> pd.DataFrame:
-    results = []
-    populations = sorted(filtered_df["population"].unique().tolist())
-
-    for population in populations:
-        pop_df = filtered_df[filtered_df["population"] == population]
-
-        responder_vals = pop_df.loc[pop_df["response"] == "yes", "percentage"]
-        non_responder_vals = pop_df.loc[pop_df["response"] == "no", "percentage"]
-
-        statistic, p_value = mannwhitneyu(
-            responder_vals,
-            non_responder_vals,
-            alternative="two-sided",
-        )
-
-        results.append(
-            {
-                "population": population,
-                **summarize_groups(responder_vals, non_responder_vals),
-                "test": "mann_whitney_u",
-                "test_statistic": statistic,
-                "p_value": p_value,
-            }
+        summary_blocks.append(
+            "\n" + "=" * 80 + "\n"
+            + f"Population: {population}\n"
+            + "=" * 80 + "\n\n"
+            + result.summary().as_text()
+            + "\n"
         )
 
     stats_df = pd.DataFrame(results)
-    rejected, fdr_values, _, _ = multipletests(stats_df["p_value"], method="fdr_bh")
-    stats_df["fdr_bh"] = fdr_values
+    rejected, fdr_values, _, _ = multipletests(
+        stats_df["joint_response_time_p_value"], method="fdr_bh"
+    )
+    stats_df["joint_response_time_fdr_bh"] = fdr_values
     stats_df["significant_fdr_0_05"] = rejected
 
-    stats_df = stats_df.sort_values("p_value").reset_index(drop=True)
-    return stats_df
+    stats_df = stats_df.sort_values("joint_response_time_p_value").reset_index(drop=True)
+    summary_text = "\n".join(summary_blocks)
+    return stats_df, summary_text
 
 
 def make_part3_boxplots(filtered_df: pd.DataFrame, output_path: Path) -> None:
@@ -212,17 +216,13 @@ def make_part3_boxplots(filtered_df: pd.DataFrame, output_path: Path) -> None:
         ax.set_xlabel("Response")
 
     axes[0].set_ylabel("Relative frequency (%)")
-    fig.suptitle(
-        "Melanoma PBMC samples treated with miraclib: responder vs non-responder"
-    )
+    fig.suptitle("Melanoma PBMC samples treated with miraclib: responder vs non-responder")
     fig.tight_layout()
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
-def build_part4_baseline_subset(
-    metadata_df: pd.DataFrame, b_cell_df: pd.DataFrame
-) -> pd.DataFrame:
+def build_part4_baseline_subset(metadata_df: pd.DataFrame, b_cell_df: pd.DataFrame) -> pd.DataFrame:
     baseline_df = metadata_df.merge(b_cell_df, on="sample", how="left")
 
     baseline_df = baseline_df[
@@ -289,28 +289,24 @@ def main() -> None:
         metadata_df = fetch_sample_metadata(conn)
         b_cell_df = fetch_b_cell_counts(conn)
 
-    # Part 2
     summary_df = build_frequency_summary(counts_df)
     summary_df.to_csv(PART2_OUTPUT, index=False)
 
-    # Part 3
     filtered_df = filter_part3_data(summary_df, metadata_df)
     filtered_df.to_csv(PART3_FILTERED_OUTPUT, index=False)
 
-    welch_df = run_part3_welch_statistics(filtered_df)
-    welch_df.to_csv(PART3_WELCH_OUTPUT, index=False)
+    gee_df, gee_summary_text = run_part3_gee_statistics(filtered_df)
+    gee_df.to_csv(PART3_GEE_OUTPUT, index=False)
 
-    mwu_df = run_part3_mannwhitney_statistics(filtered_df)
-    mwu_df.to_csv(PART3_MWU_OUTPUT, index=False)
+    with open(PART3_SUMMARY_OUTPUT, "w", encoding="utf-8") as f:
+        f.write(gee_summary_text)
 
     make_part3_boxplots(filtered_df, PART3_PLOT_OUTPUT)
 
-    # Part 4
     baseline_df = build_part4_baseline_subset(metadata_df, b_cell_df)
     baseline_df.to_csv(PART4_BASELINE_OUTPUT, index=False)
 
     part4_results = run_part4_outputs(baseline_df)
-
     part4_results["samples_per_project"].to_csv(PART4_PROJECT_OUTPUT, index=False)
     part4_results["subjects_by_response"].to_csv(PART4_RESPONSE_OUTPUT, index=False)
     part4_results["subjects_by_sex"].to_csv(PART4_SEX_OUTPUT, index=False)
@@ -324,28 +320,18 @@ def main() -> None:
             f"{part4_results['average_b_cell_count_male_responders']:.2f}\n"
         )
 
-    unique_samples = (
-        filtered_df[["sample", "response"]]
-        .drop_duplicates()
-        .groupby("response")
-        .size()
-        .to_dict()
-    )
-
     print(f"Part 2 summary table written to: {PART2_OUTPUT}")
     print(f"Part 2 rows written: {len(summary_df)}")
+    print(f"Part 2 columns: {list(summary_df.columns)}")
 
     print(f"\nPart 3 filtered table written to: {PART3_FILTERED_OUTPUT}")
     print(f"Part 3 filtered rows written: {len(filtered_df)}")
-    print(f"Unique filtered samples by response: {unique_samples}")
 
-    print(f"\nPrimary analysis written to: {PART3_WELCH_OUTPUT}")
-    print(welch_df.to_string(index=False))
+    print(f"\nPart 3 GEE results written to: {PART3_GEE_OUTPUT}")
+    print(gee_df.to_string(index=False))
 
-    print(f"\nSensitivity analysis written to: {PART3_MWU_OUTPUT}")
-    print(mwu_df.to_string(index=False))
-
-    print(f"\nPart 3 boxplots written to: {PART3_PLOT_OUTPUT}")
+    print(f"\nPart 3 GEE model summaries written to: {PART3_SUMMARY_OUTPUT}")
+    print(f"Part 3 boxplots written to: {PART3_PLOT_OUTPUT}")
 
     print(f"\nPart 4 baseline samples written to: {PART4_BASELINE_OUTPUT}")
     print(f"Baseline subset rows: {len(baseline_df)}")
