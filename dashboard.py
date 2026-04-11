@@ -246,6 +246,73 @@ tab_overview, tab_part2, tab_part3, tab_part4 = st.tabs(
 with tab_overview:
     st.header("Overview")
 
+    st.markdown(
+        """
+        This dashboard was built to help **Bob Loblaw** review immune cell population
+        data from a longitudinal clinical trial and share the findings clearly with
+        **Yah D'yada**.
+
+        The pipeline begins with the input file cell-counts.csv, loading the data into a 
+        relational SQLite database, computing frequencies of immune cells per sample, comparing 
+        responder vs. non-responder within a melanoma PBMC dataset that received miraclib treatment, 
+        and summarizing the baseline subgroup.
+        """
+    )
+
+    st.subheader("Analysis workflow")
+
+    wf1, wf2, wf3, wf4, wf5 = st.columns(5)
+    wf1.markdown("### 1\n**Raw CSV**\n\nClinical sample metadata and five immune cell counts per sample")
+    wf2.markdown("### 2\n**SQLite database**\n\nNormalized tables for projects, subjects, samples, populations, and counts")
+    wf3.markdown("### 3\n**Frequency Summary**\n\nRelative frequency table for each population within each sample")
+    wf4.markdown("### 4\n**Response Comparison**\n\nResponder vs non-responder comparison in melanoma PBMC samples treated with miraclib")
+    wf5.markdown("### 5\n**Baseline Subset**\n\nBaseline melanoma PBMC subgroup summary and B-cell result")
+
+    st.markdown("---")
+
+    st.subheader("What each tab shows")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(
+            """
+            **Overview**  
+            Explains the workflow, generated outputs, and how to use the dashboard.
+
+            **Part 2: Frequency Summary**  
+            Shows the relative frequency of each immune cell population in each sample.
+            """
+        )
+    with col2:
+        st.markdown(
+            """
+            **Part 3: Statistical Analysis**  
+            Compares responders and non-responders in melanoma PBMC samples treated with
+            miraclib using a repeated-measures GEE model and interactive boxplots.
+
+            **Part 4: Baseline Subset**  
+            Summarizes the baseline melanoma PBMC miraclib subset, including project counts,
+            response counts, sex counts, and the average B-cell count in melanoma male responders.
+            """
+        )
+
+    st.markdown("---")
+
+    st.subheader("Project snapshot")
+
+    snap1, snap2, snap3, snap4 = st.columns(4)
+    snap1.metric("Total samples", "10,500")
+    snap2.metric("Immune populations", "5")
+    snap3.metric("Part 3 samples", "1,968")
+    snap4.metric("Part 4 baseline samples", "656")
+
+    with st.expander("Database schema"):
+        st.image("assets/schema.svg", caption="Normalized SQLite schema", use_container_width=True)
+
+    st.markdown("---")
+
+    st.subheader("Generated output status")
+
     if not OUTPUT_DIR.exists():
         st.error("The outputs directory was not found. Run the analysis pipeline first.")
     else:
@@ -281,7 +348,7 @@ with tab_overview:
             "part4_baseline_rows": 0 if part4_baseline_df is None else len(part4_baseline_df),
         }
     )
-
+    
 with tab_part2:
     st.header("Part 2: Frequency Summary")
 
